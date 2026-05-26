@@ -370,8 +370,13 @@ function resetSlots() {
 function renderSlotsForDay(dateObj) {
     const slotsContainer = document.getElementById("slots-container");
     const dayLabel = document.getElementById("selected-day-label");
-    const btnAgendar = document.getElementById("btn-agendar");
+    let btnAgendar = document.getElementById("btn-agendar");
     
+    // Clonamos primero para evitar fugas de eventos y actualizar el nodo en el DOM
+    const btnClon = btnAgendar.cloneNode(true);
+    btnAgendar.parentNode.replaceChild(btnClon, btnAgendar);
+    btnAgendar = btnClon;
+
     btnAgendar.disabled = true;
     state.calendar.selectedSlot = null;
 
@@ -387,6 +392,11 @@ function renderSlotsForDay(dateObj) {
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
     const day = String(dateObj.getDate()).padStart(2, '0');
     const datePrefix = `${year}-${month}-${day}`;
+
+    // Añadir listener de agenda
+    btnAgendar.addEventListener("click", () => {
+        confirmarAgenda(datePrefix, state.calendar.selectedSlot);
+    });
 
     // Renderizar slots
     TIME_SLOTS.forEach(time => {
@@ -425,15 +435,6 @@ function renderSlotsForDay(dateObj) {
         }
 
         slotsContainer.appendChild(slotBtn);
-    });
-
-    // Añadir listener para Confirmar Agenda si no está asignado
-    // Eliminamos listeners anteriores clonando el nodo para evitar fugas de eventos
-    const btnClon = btnAgendar.cloneNode(true);
-    btnAgendar.parentNode.replaceChild(btnClon, btnAgendar);
-    
-    btnClon.addEventListener("click", () => {
-        confirmarAgenda(datePrefix, state.calendar.selectedSlot);
     });
 }
 
