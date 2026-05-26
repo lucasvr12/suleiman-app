@@ -47,7 +47,7 @@ const MESES = [
 ];
 
 // URLs del Servidor (Redirigido a Google Apps Script Web App unificado en la nube)
-const API_URL = "https://script.google.com/macros/s/AKfycbw3Q-EpcVn886IOacW83le0PZFmkP86AyONFH6uYFceT8rmf8pcUvyotHQuFtibtUmhEg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwHpaPKZ-ZeL0kdXOLjRCYiCUldo6V1DsBvAPDAZJQ0GfcDapJuDfKOLvgNOfYvzxI9jw/exec";
 const API_LEADS = API_URL;
 const API_BLOQUEOS = API_URL;
 
