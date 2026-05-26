@@ -757,7 +757,27 @@ function mostrarExito(lead) {
     // Configurar redirección de WhatsApp
     const waBtn = document.getElementById("whatsapp-confirm-btn");
     const waNumber = "528123246698"; // Código de país +52 + 81 2324 6698
-    const waText = `Hola! Acabo de agendar mi asesoría para mi Estrategia de Retiro Plus con Finanzas con K 🪙. Mi nombre es ${lead.nombre}.`;
+    
+    const waText = `¡Hola Lucas! 🪙 Acabo de agendar mi asesoría para mi Estrategia de Retiro Plus con Finanzas con K.
+
+Resumen de mi Diagnóstico:
+👤 Nombre: ${lead.nombre}
+📧 Correo: ${lead.correo}
+🎂 Edad: ${lead.edad} años
+💍 Estado Civil: ${lead.estado_civil}
+👶 ¿Hijos?: ${lead.tiene_hijos}
+🛡️ Seguros actuales: ${lead.seguros.length > 0 ? lead.seguros.join(", ") : "Ninguno"}
+💼 Profesión: ${lead.profesion}
+💰 Ahorro Mensual: ${lead.capacidad_ahorro}
+📈 Declara Impuestos: ${lead.declara_impuestos}
+📅 Edad Retiro Deseada: ${lead.edad_retiro} años
+💵 ¿Inversiones?: ${lead.inversiones_actuales === "Sí" ? `Sí (${lead.donde_invierte.join(", ")})` : "No"}
+📊 Perfil: ${lead.tipo_inversionista}
+${lead.comentarios ? `📝 Notas: ${lead.comentarios}\n` : ""}
+🗓️ Fecha programada: ${formattedDateString} a las ${formattedTimeString} (Hora Centro).
+
+¡Quedo a la espera del enlace de acceso! 🚀`;
+
     const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waText)}`;
     waBtn.href = waUrl;
 
