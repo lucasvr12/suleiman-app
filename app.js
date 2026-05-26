@@ -476,11 +476,18 @@ async function confirmarAgenda(dateStr, timeStr) {
             throw new Error(savedLead.error || "No se pudo agendar la cita.");
         }
 
+        // Construir el objeto lead completo para la pantalla de éxito
+        const completedLead = {
+            ...state.lead,
+            fecha_cita: fechaHoraCita,
+            estatus: "Agendada"
+        };
+
         // Actualizar bloqueos locales
         await fetchBlockedTimes();
 
         // Mostrar pantalla de éxito
-        mostrarExito(savedLead);
+        mostrarExito(completedLead);
 
     } catch (err) {
         console.error(err);
