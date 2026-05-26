@@ -273,6 +273,14 @@ body {
     align-items: flex-start;
 }
 
+.emoji-span {
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+    color: initial !important;
+    display: inline-block;
+}
+
 .pre-title {
     font-size: 0.8rem;
     font-weight: 700;
