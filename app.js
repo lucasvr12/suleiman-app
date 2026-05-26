@@ -10,10 +10,20 @@ const CURRENT_DATE_LIMIT = new Date('2026-05-25T17:35:00-06:00');
 const state = {
     lead: {
         nombre: '',
+        correo: '',
         whatsapp: '',
+        edad: '',
+        estado_civil: '',
+        tiene_hijos: '',
+        seguros: [],
         profesion: '',
         capacidad_ahorro: '',
         declara_impuestos: '',
+        edad_retiro: '',
+        inversiones_actuales: '',
+        donde_invierte: [],
+        tipo_inversionista: '',
+        comentarios: '',
         fecha_cita: null
     },
     calendar: {
@@ -47,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initFormValidation();
     initCalendarNav();
     initModal();
+    initCustomFormInteractions();
 });
 
 /* ==========================================================================
@@ -76,15 +87,80 @@ function initNavigation() {
 }
 
 /* ==========================================================================
+   INTERACCIONES AVANZADAS DE FORMULARIO DE DIAGNÓSTICO
+   ========================================================================== */
+function initCustomFormInteractions() {
+    // 1. Mostrar/ocultar condicional de inversiones
+    const invSelect = document.getElementById("inversiones_actuales");
+    const condContainer = document.getElementById("inversiones-condicional");
+
+    if (invSelect && condContainer) {
+        invSelect.addEventListener("change", () => {
+            if (invSelect.value === "Sí") {
+                condContainer.classList.add("show");
+            } else {
+                condContainer.classList.remove("show");
+                // Limpiar checkboxes si se oculta
+                const checks = condContainer.querySelectorAll("input[type='checkbox']");
+                checks.forEach(c => {
+                    c.checked = false;
+                    c.parentElement.classList.remove("selected");
+                });
+            }
+        });
+    }
+
+    // 2. Micro-interacción premium de selección de Tarjetas de Checkbox y Radio
+    const checkboxes = document.querySelectorAll(".checkbox-label input[type='checkbox']");
+    checkboxes.forEach(cb => {
+        // Inicializar estado visual por si está precargado
+        if (cb.checked) cb.parentElement.classList.add("selected");
+
+        cb.addEventListener("change", () => {
+            if (cb.checked) {
+                // Si es "Ninguno" en seguros, desmarcar los demás
+                if (cb.value === "Ninguno") {
+                    checkboxes.forEach(other => {
+                        if (other !== cb && other.name === cb.name) {
+                            other.checked = false;
+                            other.parentElement.classList.remove("selected");
+                        }
+                    });
+                } else {
+                    // Si se marca otro, desmarcar "Ninguno"
+                    const ninguno = Array.from(checkboxes).find(o => o.value === "Ninguno" && o.name === cb.name);
+                    if (ninguno) {
+                        ninguno.checked = false;
+                        ninguno.parentElement.classList.remove("selected");
+                    }
+                }
+                cb.parentElement.classList.add("selected");
+            } else {
+                cb.parentElement.classList.remove("selected");
+            }
+        });
+    });
+}
+
+/* ==========================================================================
    VALIDACIÓN DE FORMULARIO Y LÓGICA DE FILTRADO CONDICIONAL
    ========================================================================== */
 function initFormValidation() {
     const form = document.getElementById("lead-form");
     const nombreInput = document.getElementById("nombre");
+    const correoInput = document.getElementById("correo");
     const whatsappInput = document.getElementById("whatsapp");
+    const edadInput = document.getElementById("edad");
+    const estadoCivilSelect = document.getElementById("estado_civil");
+    const tieneHijosSelect = document.getElementById("tiene_hijos");
     const profesionSelect = document.getElementById("profesion");
-    const declaraSelect = document.getElementById("declara_impuestos");
     const ahorroSelect = document.getElementById("capacidad_ahorro");
+    const declaraSelect = document.getElementById("declara_impuestos");
+    const edadRetiroInput = document.getElementById("edad_retiro");
+    const invActualesSelect = document.getElementById("inversiones_actuales");
+    const tipoInversionistaSelect = document.getElementById("tipo_inversionista");
+    const comentariosText = document.getElementById("comentarios");
+
     const btnContinuar = document.getElementById("btn-continuar");
     const spinner = document.getElementById("form-spinner");
 
@@ -102,11 +178,38 @@ function initFormValidation() {
             isValid = false;
         }
 
+        // Validar Correo
+        const correoVal = correoInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(correoVal)) {
+            showError("correo", "Ingresa un correo electrónico válido (ejemplo@dominio.com).");
+            isValid = false;
+        }
+
         // Validar WhatsApp (10 dígitos exactos)
         const whatsappVal = whatsappInput.value.trim();
         const phoneRegex = /^[0-9]{10}$/;
         if (!phoneRegex.test(whatsappVal)) {
-            showError("whatsapp", "Por favor ingresa un número de WhatsApp válido a 10 dígitos (ej. 8112345678).");
+            showError("whatsapp", "Por favor ingresa un número de WhatsApp a 10 dígitos (ej. 8112345678).");
+            isValid = false;
+        }
+
+        // Validar Edad
+        const edadVal = parseInt(edadInput.value);
+        if (isNaN(edadVal) || edadVal < 18 || edadVal > 99) {
+            showError("edad", "Debes ingresar una edad válida entre 18 y 99 años.");
+            isValid = false;
+        }
+
+        // Validar Estado Civil
+        if (!estadoCivilSelect.value) {
+            showError("estado_civil", "Selecciona tu estado civil.");
+            isValid = false;
+        }
+
+        // Validar Hijos
+        if (!tieneHijosSelect.value) {
+            showError("tiene_hijos", "Selecciona si tienes hijos.");
             isValid = false;
         }
 
@@ -116,26 +219,70 @@ function initFormValidation() {
             isValid = false;
         }
 
-        // Validar Declaración
-        if (!declaraSelect.value) {
-            showError("declara", "Selecciona si declaras impuestos.");
-            isValid = false;
-        }
-
         // Validar Capacidad Ahorro
         if (!ahorroSelect.value) {
             showError("ahorro", "Selecciona tu capacidad de ahorro mensual.");
             isValid = false;
         }
 
+        // Validar Declaración
+        if (!declaraSelect.value) {
+            showError("declara", "Selecciona si declaras impuestos.");
+            isValid = false;
+        }
+
+        // Validar Edad de Retiro
+        const edadRetiroVal = parseInt(edadRetiroInput.value);
+        if (isNaN(edadRetiroVal) || edadRetiroVal < 40 || edadRetiroVal > 85) {
+            showError("edad_retiro", "Ingresa una edad de retiro de entre 40 y 85 años.");
+            isValid = false;
+        } else if (edadRetiroVal <= edadVal) {
+            showError("edad_retiro", "La edad de retiro debe ser mayor a tu edad actual.");
+            isValid = false;
+        }
+
+        // Validar Inversiones Actuales
+        if (!invActualesSelect.value) {
+            showError("inversiones_actuales", "Selecciona si tienes inversiones actualmente.");
+            isValid = false;
+        }
+
+        // Validar Tipo de Inversionista
+        if (!tipoInversionistaSelect.value) {
+            showError("tipo_inversionista", "Selecciona tu perfil de inversionista.");
+            isValid = false;
+        }
+
         if (!isValid) return;
+
+        // Recolectar seguros contratados
+        const segurosMarcados = [];
+        const segurosChecks = form.querySelectorAll("input[name='seguros']:checked");
+        segurosChecks.forEach(ch => segurosMarcados.push(ch.value));
+
+        // Recolectar dónde invierte
+        const dondeInvierteMarcado = [];
+        if (invActualesSelect.value === "Sí") {
+            const invChecks = form.querySelectorAll("input[name='donde_invierte']:checked");
+            invChecks.forEach(ch => dondeInvierteMarcado.push(ch.value));
+        }
 
         // Guardar datos en el estado global
         state.lead.nombre = nombreInput.value.trim();
+        state.lead.correo = correoVal;
         state.lead.whatsapp = whatsappVal;
+        state.lead.edad = edadVal;
+        state.lead.estado_civil = estadoCivilSelect.value;
+        state.lead.tiene_hijos = tieneHijosSelect.value;
+        state.lead.seguros = segurosMarcados;
         state.lead.profesion = profesionSelect.value;
-        state.lead.declara_impuestos = declaraSelect.value;
         state.lead.capacidad_ahorro = ahorroSelect.value;
+        state.lead.declara_impuestos = declaraSelect.value;
+        state.lead.edad_retiro = edadRetiroVal;
+        state.lead.inversiones_actuales = invActualesSelect.value;
+        state.lead.donde_invierte = dondeInvierteMarcado;
+        state.lead.tipo_inversionista = tipoInversionistaSelect.value;
+        state.lead.comentarios = comentariosText.value.trim();
 
         // Mostrar carga
         btnContinuar.disabled = true;
@@ -150,10 +297,20 @@ function initFormValidation() {
                     headers: { "Content-Type": "text/plain" },
                     body: JSON.stringify({
                         nombre: state.lead.nombre,
+                        correo: state.lead.correo,
                         whatsapp: state.lead.whatsapp,
+                        edad: state.lead.edad,
+                        estado_civil: state.lead.estado_civil,
+                        tiene_hijos: state.lead.tiene_hijos,
+                        seguros: state.lead.seguros.join(", "),
                         profesion: state.lead.profesion,
-                        declara_impuestos: state.lead.declara_impuestos,
                         capacidad_ahorro: state.lead.capacidad_ahorro,
+                        declara_impuestos: state.lead.declara_impuestos,
+                        edad_retiro: state.lead.edad_retiro,
+                        inversiones_actuales: state.lead.inversiones_actuales,
+                        donde_invierte: state.lead.donde_invierte.join(", "),
+                        tipo_inversionista: state.lead.tipo_inversionista,
+                        comentarios: state.lead.comentarios,
                         fecha_cita: null
                     })
                 });
@@ -459,10 +616,20 @@ async function confirmarAgenda(dateStr, timeStr) {
             headers: { "Content-Type": "text/plain" },
             body: JSON.stringify({
                 nombre: state.lead.nombre,
+                correo: state.lead.correo,
                 whatsapp: state.lead.whatsapp,
+                edad: state.lead.edad,
+                estado_civil: state.lead.estado_civil,
+                tiene_hijos: state.lead.tiene_hijos,
+                seguros: state.lead.seguros.join(", "),
                 profesion: state.lead.profesion,
-                declara_impuestos: state.lead.declara_impuestos,
                 capacidad_ahorro: state.lead.capacidad_ahorro,
+                declara_impuestos: state.lead.declara_impuestos,
+                edad_retiro: state.lead.edad_retiro,
+                inversiones_actuales: state.lead.inversiones_actuales,
+                donde_invierte: state.lead.donde_invierte.join(", "),
+                tipo_inversionista: state.lead.tipo_inversionista,
+                comentarios: state.lead.comentarios,
                 fecha_cita: fechaHoraCita
             })
         });
@@ -529,8 +696,24 @@ function mostrarExito(lead) {
             <span class="summary-value">${lead.nombre}</span>
         </div>
         <div class="summary-row">
+            <span class="summary-label">Correo:</span>
+            <span class="summary-value">${lead.correo}</span>
+        </div>
+        <div class="summary-row">
             <span class="summary-label">WhatsApp:</span>
             <span class="summary-value">+52 ${lead.whatsapp}</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">Edad / Estado Civil:</span>
+            <span class="summary-value">${lead.edad} años (${lead.estado_civil})</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">¿Tiene Hijos?:</span>
+            <span class="summary-value">${lead.tiene_hijos}</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">Seguros Actuales:</span>
+            <span class="summary-value">${lead.seguros.length > 0 ? lead.seguros.join(", ") : "Ninguno"}</span>
         </div>
         <div class="summary-row">
             <span class="summary-label">Perfil Profesional:</span>
@@ -540,6 +723,23 @@ function mostrarExito(lead) {
             <span class="summary-label">Ahorro Mensual:</span>
             <span class="summary-value highlight">${lead.capacidad_ahorro}</span>
         </div>
+        <div class="summary-row">
+            <span class="summary-label">Edad Retiro Deseada:</span>
+            <span class="summary-value highlight">${lead.edad_retiro} años</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">Inversiones Actuales:</span>
+            <span class="summary-value">${lead.inversiones_actuales === "Sí" ? `Sí (${lead.donde_invierte.join(", ")})` : "No"}</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">Perfil Temeridad:</span>
+            <span class="summary-value">${lead.tipo_inversionista}</span>
+        </div>
+        ${lead.comentarios ? `
+        <div class="summary-row" style="grid-column: 1 / -1;">
+            <span class="summary-label">Notas Adicionales:</span>
+            <span class="summary-value" style="font-style: italic;">"${lead.comentarios}"</span>
+        </div>` : ''}
         <div class="summary-row">
             <span class="summary-label">Fecha de la Cita:</span>
             <span class="summary-value highlight">${formattedDateString}</span>
@@ -557,7 +757,7 @@ function mostrarExito(lead) {
     // Configurar redirección de WhatsApp
     const waBtn = document.getElementById("whatsapp-confirm-btn");
     const waNumber = "528123246698"; // Código de país +52 + 81 2324 6698
-    const waText = `Hola, acabo de agendar mi asesoría para el diseño de mi Estrategia Fiscal Élite. Mi nombre es ${lead.nombre}.`;
+    const waText = `Hola! Acabo de agendar mi asesoría para mi Estrategia de Retiro Plus con Finanzas con K 🪙. Mi nombre es ${lead.nombre}.`;
     const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waText)}`;
     waBtn.href = waUrl;
 
@@ -573,8 +773,8 @@ function mostrarExito(lead) {
     const startUTC = formatToUTC(startTime);
     const endUTC = formatToUTC(endTime);
 
-    const eventTitle = "Estrategia Fiscal Élite (Optimaxx Plus Allianz)";
-    const eventDetails = `Hola ${lead.nombre},\n\nTu sesión de asesoría financiera para el diseño de tu Estrategia Fiscal Élite y Crecimiento Patrimonial en Nuevo León está confirmada.\n\nDetalles del Perfil:\n- Capacidad de Ahorro: ${lead.capacidad_ahorro} al mes.\n- Profesión: ${lead.profesion}.\n- Declaración de Impuestos: ${lead.declara_impuestos}.\n\nNos conectaremos para simular tu escenario en el S&P 500 y la deducción fiscal bajo el Art. 151 de la LISR.\n\nPor favor confirma en el chat de WhatsApp (+52 81 2324 6698) para recibir el enlace directo de Zoom/Meet para la sesión.`;
+    const eventTitle = "Estrategia de Retiro Plus (Finanzas con K 📈)";
+    const eventDetails = `Hola ${lead.nombre},\n\nTu sesión de asesoría financiera para diseñar tu Estrategia de Retiro Plus respaldada por Allianz está confirmada.\n\nResumen del Diagnóstico:\n- Edad: ${lead.edad} años\n- Estado Civil: ${lead.estado_civil} (Hijos: ${lead.tiene_hijos})\n- Ahorro Mensual: ${lead.capacidad_ahorro}\n- Edad de Retiro Deseada: ${lead.edad_retiro} años\n- Perfil de Riesgo: ${lead.tipo_inversionista}\n\nNos conectaremos para modelar tus proyecciones en portafolios del S&P 500 y Nasdaq.\n\nPor favor confirma en el chat de WhatsApp (+52 81 2324 6698) para recibir el enlace directo de Zoom/Meet para la sesión.`;
     const eventLocation = "Sesión Online (Zoom/Meet)";
 
     const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&dates=${startUTC}/${endUTC}&details=${encodeURIComponent(eventDetails)}&location=${encodeURIComponent(eventLocation)}`;
