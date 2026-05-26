@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estrategia Fiscal Élite & Crecimiento Patrimonial - Allianz Nuevo León</title>
+    
+    <!-- Meta Tags para SEO y Redes Sociales -->
+    <meta name="description" content="Diseña tu plan de inversión a la medida con Allianz en Nuevo León. Optimaxx Plus te permite invertir en el S&P 500, Nasdaq u Oro y reducir legalmente tus impuestos bajo el Art. 151 de la LISR.">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0B132B">
+    
+    <!-- Fuentes de Google de Alta Calidad -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Enlace a Hoja de Estilos -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header / Barra de Navegación -->
+    <header class="main-header" id="main-header">
+        <div class="header-container">
+            <a href="#" class="brand-logo" id="brand-logo">
+                <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" stroke="url(#goldGrad)" stroke-width="2.5" fill="none"/>
+                    <path d="M35 65V50M45 65V40M55 65V30M65 65V20" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M25 72H75" stroke="#F8FAFC" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M50 50L62 38" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="62" cy="38" r="3" fill="#38BDF8"/>
+                    <defs>
+                        <linearGradient id="goldGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#D4AF37" />
+                            <stop offset="50%" stop-color="#E5BA73" />
+                            <stop offset="100%" stop-color="#C5A880" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="logo-text">
+                    <span class="company-name">FINANZAS ÉLITE</span>
+                    <span class="partner-tag">Respaldado por Allianz</span>
+                </div>
+            </a>
+            <nav class="desktop-nav">
+                <a href="#hero" class="nav-link">Inicio</a>
+                <a href="#beneficios" class="nav-link">Propuesta de Valor</a>
+                <button class="nav-btn" id="nav-action-btn">Diseñar Plan</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal (SPA) -->
+    <main class="spa-content">
+
+        <!-- VISTA DE ÉXITO (Oculta por defecto, se activa al agendar) -->
+        <section id="success-screen" class="success-screen hidden">
+            <div class="success-container glass-card">
+                <div class="success-icon-wrapper">
+                    <svg viewBox="0 0 100 100" class="success-svg">
+                        <circle cx="50" cy="50" r="45" class="circle-draw"></circle>
+                        <path d="M30 52 L45 65 L70 35" class="check-draw"></path>
+                    </svg>
+                </div>
+                <h1 class="success-title">¡Asesoría Agendada Con Éxito!</h1>
+                <p class="success-subtitle">Tu espacio exclusivo para diseñar tu Estrategia Fiscal y de Crecimiento Patrimonial ha sido reservado.</p>
+                
+                <div class="appointment-summary" id="appointment-summary">
+                    <!-- Rellenado dinámicamente con JS -->
+                </div>
+
+                <p class="success-instruction">Da clic al siguiente botón para confirmar directamente por WhatsApp y recibir tu enlace de acceso a la sesión.</p>
+                
+                <div class="success-actions">
+                    <a href="#" target="_blank" id="whatsapp-confirm-btn" class="whatsapp-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.458L0 24zm5.835-3.3c1.655.982 3.273 1.499 4.887 1.501 5.42.003 9.825-4.388 9.829-9.785.002-2.615-1.01-5.074-2.85-6.918C15.907 3.655 13.46 2.64 10.9 2.64c-5.424 0-9.83 4.394-9.834 9.793-.001 1.83.479 3.618 1.392 5.181L1.471 21.5l4.401-1.8zm11.362-6.848c-.29-.146-1.719-.848-1.984-.944-.265-.096-.458-.144-.65.144-.193.288-.748.944-.916 1.137-.168.193-.337.216-.627.072-.29-.146-1.223-.45-2.33-1.439-.861-.768-1.443-1.717-1.612-2.008-.168-.29-.018-.447.127-.591.13-.13.29-.337.434-.505.145-.169.193-.289.29-.481.096-.193.048-.361-.024-.505-.072-.144-.65-1.565-.891-2.143-.235-.566-.474-.489-.65-.498-.17-.008-.362-.01-.554-.01-.193 0-.506.072-.77.361-.266.289-1.012.988-1.012 2.409 0 1.42 1.036 2.793 1.18 2.986.145.193 2.037 3.111 4.935 4.361.689.298 1.227.476 1.648.609.693.22 1.324.19 1.823.115.556-.083 1.72-.703 1.961-1.383.242-.68.242-1.264.17-1.383-.073-.12-.266-.192-.556-.338z"/>
+                        </svg>
+                        Confirmar por WhatsApp
+                    </a>
+                    <a href="#" target="_blank" id="google-calendar-btn" class="calendar-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Agregar a mi Google Calendar
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN A: LANDING PAGE -->
+        <section id="hero" class="hero-section">
+            <div class="bg-glow"></div>
+            <div class="hero-container">
+                <div class="hero-content">
+                    <span class="pre-title">PRODUCTO PREMIER - NUEVO LEÓN</span>
+                    <h1 class="hero-title">Estrategia Fiscal Élite y Crecimiento Patrimonial en Nuevo León</h1>
+                    <h2 class="hero-subtitle">Diseña un plan de inversión a tu medida respaldado por Allianz. Invierte en el S&P 500, Nasdaq u Oro, reduce legalmente tus impuestos (Art. 151 LISR) y construye tu capital a futuro.</h2>
+                    
+                    <ul class="value-bullets" id="beneficios">
+                        <li class="bullet-item">
+                            <span class="icon-span">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            </span>
+                            <div class="bullet-text">
+                                <strong>Flexibilidad inteligente</strong>
+                                <span>Planes flexibles con beneficios clave a partir del mes 18.</span>
+                            </div>
+                        </li>
+                        <li class="bullet-item">
+                            <span class="icon-span">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+                            </span>
+                            <div class="bullet-text">
+                                <strong>Diversificación global</strong>
+                                <span>Portafolios diversificados internacionales desde $2,000 MXN al mes.</span>
+                            </div>
+                        </li>
+                        <li class="bullet-item">
+                            <span class="icon-span">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </span>
+                            <div class="bullet-text">
+                                <strong>Deducción fiscal óptima</strong>
+                                <span>Estrategias deducibles y patrimoniales personalizadas.</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <button class="cta-button" id="hero-cta-btn">
+                        <span>Diseñar mi Escenario Financiero</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <polyline points="19 12 12 19 5 12"></polyline>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Ilustración Ejecutiva Premium -->
+                <div class="hero-visual">
+                    <div class="visual-card glass-card">
+                        <div class="card-header">
+                            <span class="card-title">Simulación de Retiro Optimaxx Plus</span>
+                            <span class="card-badge">Art. 151 LISR</span>
+                        </div>
+                        <div class="visual-chart">
+                            <div class="bar-chart-container">
+                                <div class="chart-bar" style="height: 30%" data-label="Sin Estrategia"><span class="bar-value">$1.2M</span></div>
+                                <div class="chart-bar active" style="height: 90%" data-label="Optimaxx Élite"><span class="bar-value">$4.8M</span></div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <p>Proyección basada en rendimiento histórico del S&P 500 (10% anual prom.) + Devolución Fiscal Anual acumulada.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN B: CUESTIONARIO DE FILTRADO CONDICIONAL -->
+        <section id="cuestionario" class="cuestionario-section">
+            <div class="section-header">
+                <h2 class="section-title">1. Diagnóstico de Perfil Financiero</h2>
+                <p class="section-subtitle">Define tus metas y analiza la viabilidad de tu plan patrimonial deducible.</p>
+            </div>
+            
+            <div class="cuestionario-container">
+                <div class="glass-card form-card">
+                    <form id="lead-form" class="lead-form" novalidate>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nombre">Nombre Completo <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    <input type="text" id="nombre" name="nombre" placeholder="Ej. Juan Pérez Garza" required>
+                                </div>
+                                <span class="error-msg" id="error-nombre"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="whatsapp">Teléfono WhatsApp (10 dígitos) <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <span class="phone-prefix">+52</span>
+                                    <input type="tel" id="whatsapp" name="whatsapp" placeholder="8112345678" maxlength="10" required>
+                                </div>
+                                <span class="error-msg" id="error-whatsapp"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-row grid-2">
+                            <div class="form-group">
+                                <label for="profesion">¿Cuál es tu profesión actual? <span class="required">*</span></label>
+                                <div class="input-wrapper select-wrapper">
+                                    <select id="profesion" name="profesion" required>
+                                        <option value="" disabled selected>Selecciona una opción</option>
+                                        <option value="Médico">Médico / Especialista</option>
+                                        <option value="Ingeniero">Ingeniero / Tecnólogo</option>
+                                        <option value="Universitario/Profesionista">Universitario / Profesionista Independiente</option>
+                                        <option value="Otro">Otro Perfil</option>
+                                    </select>
+                                </div>
+                                <span class="error-msg" id="error-profesion"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="declara_impuestos">¿Declaras impuestos como Persona Física? <span class="required">*</span></label>
+                                <div class="input-wrapper select-wrapper">
+                                    <select id="declara_impuestos" name="declara_impuestos" required>
+                                        <option value="" disabled selected>Selecciona una opción</option>
+                                        <option value="Sí, como Persona Física">Sí, como Persona Física</option>
+                                        <option value="No / Estoy en RESICO / Otro">No / Estoy en RESICO / Otro</option>
+                                    </select>
+                                </div>
+                                <span class="error-msg" id="error-declara"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="capacidad_ahorro">¿Qué capacidad de ahorro mensual tienes disponible hoy? <span class="required">*</span></label>
+                                <div class="input-wrapper select-wrapper">
+                                    <select id="capacidad_ahorro" name="capacidad_ahorro" required>
+                                        <option value="" disabled selected>Selecciona una capacidad</option>
+                                        <option value="Menos de $2,000">Menos de $2,000 MXN</option>
+                                        <option value="$2,000 - $4,000">$2,000 - $4,000 MXN</option>
+                                        <option value="Más de $4,000">Más de $4,000 MXN</option>
+                                    </select>
+                                </div>
+                                <span class="error-msg" id="error-ahorro"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="submit-btn" id="btn-continuar">
+                                <span class="btn-text">Continuar al Calendario</span>
+                                <div class="spinner hidden" id="form-spinner"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN C: CALENDARIO VIRTUAL INTERACTIVO -->
+        <section id="calendario-section" class="calendario-section hidden">
+            <div class="section-header">
+                <h2 class="section-title">2. Agenda de Asesoría Estratégica</h2>
+                <p class="section-subtitle">Selecciona un día de la semana y escoge el horario que mejor se adapte para diseñar tu plan.</p>
+            </div>
+
+            <div class="calendario-layout-container">
+                <div class="calendario-grid-wrapper">
+                    
+                    <!-- Tarjeta del Calendario (Día) -->
+                    <div class="glass-card calendar-card">
+                        <div class="calendar-header">
+                            <button type="button" class="calendar-nav-btn" id="prev-month-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                            </button>
+                            <span class="calendar-current-month" id="current-month-year">Mayo 2026</span>
+                            <button type="button" class="calendar-nav-btn" id="next-month-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                            </button>
+                        </div>
+                        
+                        <div class="calendar-weekdays">
+                            <div>Lun</div>
+                            <div>Mar</div>
+                            <div>Mié</div>
+                            <div>Jue</div>
+                            <div>Vie</div>
+                            <div>Sáb</div>
+                            <div>Dom</div>
+                        </div>
+                        
+                        <div class="calendar-days-grid" id="calendar-days-grid">
+                            <!-- Inyectado dinámicamente -->
+                        </div>
+
+                        <div class="calendar-footer-legend">
+                            <div class="legend-item"><span class="dot available"></span>Disponible</div>
+                            <div class="legend-item"><span class="dot selected"></span>Seleccionado</div>
+                            <div class="legend-item"><span class="dot disabled"></span>No Laborable / Ocupado</div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta de Horarios (Slots) -->
+                    <div class="glass-card slots-card">
+                        <h3 class="slots-card-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span>Horarios del <span id="selected-day-label">...</span></span>
+                        </h3>
+                        
+                        <div class="slots-container" id="slots-container">
+                            <div class="slots-placeholder">
+                                Selecciona un día hábil en el calendario para ver los horarios de 45 minutos disponibles.
+                            </div>
+                        </div>
+
+                        <div class="confirm-appointment-action">
+                            <button type="button" class="confirm-appointment-btn" id="btn-agendar" disabled>
+                                <span class="btn-text">Confirmar y Agendar Asesoría</span>
+                                <div class="spinner hidden" id="agenda-spinner"></div>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE NO CALIFICA (Menos de $2,000) -->
+    <div class="modal-overlay hidden" id="modal-unqualified">
+        <div class="modal-card glass-card">
+            <div class="modal-header">
+                <div class="modal-icon gold-glow">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <button class="modal-close" id="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3 class="modal-title">Agradecemos sinceramente tu interés</h3>
+                <p class="modal-text">Por el momento, las estrategias patrimoniales de **Optimaxx Plus** de Allianz requieren una aportación mínima de **$2,000 pesos mensuales** para cumplir con las metas de capitalización e inversión global.</p>
+                <p class="modal-text">Hemos guardado tus datos de contacto con éxito en nuestro sistema. Tan pronto abramos opciones patrimoniales adaptadas a tu perfil de ahorro mensual, un asesor de nuestro equipo se pondrá en contacto contigo.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn-confirm" id="modal-ok-btn">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Corporativo -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-about">
+                <span class="footer-title">Allianz Optimaxx Plus - Nuevo León</span>
+                <p class="footer-text">Consultoría independiente especializada en estrategias de optimización fiscal para el retiro y protección patrimonial familiar, estructurada bajo el Artículo 151 de la Ley del Impuesto sobre la Renta (LISR) en México. Allianz México, S.A. Compañía de Seguros es la entidad financiera autorizada regulada por la CNSF.</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Finanzas Élite Nuevo León. Todos los derechos reservados. Este sitio no pertenece oficialmente a Allianz México S.A., se opera como agente corporativo certificado para la comercialización regulada de Optimaxx Plus.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Enlace a la Lógica JS -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Excluir bases de datos locales
+data/
+
+# Excluir archivos de logs
+*.log
+.system_generated/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
