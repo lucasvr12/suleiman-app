@@ -1537,3 +1537,70 @@ body {
     margin-top: 15px;
     pointer-events: auto;
 }
+
+/* ==========================================================================
+   ESTILOS PREMIUM DEL PANEL DE ADMINISTRACIÓN
+   ========================================================================== */
+.admin-panel {
+    padding: 120px 0 80px 0;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, rgba(0, 83, 201, 0.08) 0%, transparent 60%);
+}
+
+.admin-block-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: var(--transition-fast);
+}
+
+.admin-block-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(0, 109, 255, 0.2);
+}
+
+.admin-block-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.admin-block-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.admin-block-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.btn-delete-block {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: var(--error-red);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-delete-block:hover {
+    background: var(--error-red);
+    color: #FFFFFF;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+@media (max-width: 768px) {
+    .admin-container {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+}

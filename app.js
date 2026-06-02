@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initCalendarNav();
     initModal();
     initCustomFormInteractions();
+    initAdminPanel();
 });
 
 /* ==========================================================================
@@ -833,4 +834,213 @@ function initModal() {
 function openUnqualifiedModal() {
     const modal = document.getElementById("modal-unqualified");
     modal.classList.remove("hidden");
+}
+
+/* ==========================================================================
+   LÓGICA DEL PANEL DE ADMINISTRACIÓN (BLOQUEOS DE HORARIO)
+   ========================================================================== */
+function initAdminPanel() {
+    const adminTrigger = document.getElementById("admin-trigger");
+    const adminLoginModal = document.getElementById("modal-admin-login");
+    const adminCloseBtn = document.getElementById("admin-close-btn");
+    const btnAdminLogin = document.getElementById("btn-admin-login");
+    const adminPasswordInput = document.getElementById("admin-password");
+    const errorAdminLogin = document.getElementById("error-admin-login");
+
+    const blockForm = document.getElementById("admin-block-form");
+    const blockDateInput = document.getElementById("admin-block-date");
+    const blockTimeSelect = document.getElementById("admin-block-time");
+    const btnAdminBlock = document.getElementById("btn-admin-block");
+    const blockSpinner = document.getElementById("admin-block-spinner");
+
+    const blocksList = document.getElementById("admin-blocks-list");
+    const btnAdminLogout = document.getElementById("btn-admin-logout");
+
+    // Abrir login modal
+    if (adminTrigger) {
+        adminTrigger.addEventListener("click", (e) => {
+            e.preventDefault();
+            adminLoginModal.classList.remove("hidden");
+            adminPasswordInput.value = "";
+            errorAdminLogin.textContent = "";
+        });
+    }
+
+    // Cerrar login modal
+    if (adminCloseBtn) {
+        adminCloseBtn.addEventListener("click", () => {
+            adminLoginModal.classList.add("hidden");
+        });
+    }
+
+    // Autenticación de administrador
+    const handleLogin = () => {
+        const password = adminPasswordInput.value;
+        if (password === "dinerotrabajando2026$$") {
+            adminLoginModal.classList.add("hidden");
+            sessionStorage.setItem("admin-logged", "true");
+            enterAdminMode();
+        } else {
+            errorAdminLogin.textContent = "Contraseña incorrecta. Inténtalo de nuevo.";
+        }
+    };
+
+    if (btnAdminLogin) btnAdminLogin.addEventListener("click", handleLogin);
+    adminPasswordInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") handleLogin();
+    });
+
+    // Entrar al Panel del Administrador (SPA toggle)
+    function enterAdminMode() {
+        // Ocultar todas las secciones públicas
+        document.getElementById("hero").classList.add("hidden");
+        document.getElementById("cuestionario").classList.add("hidden");
+        document.getElementById("calendario-section").classList.add("hidden");
+        document.getElementById("success-screen").classList.add("hidden");
+        document.getElementById("main-header").classList.add("hidden");
+
+        // Mostrar Panel de Administrador
+        document.getElementById("admin-panel").classList.remove("hidden");
+
+        // Cargar bloqueos actuales
+        loadAdminBlocks();
+    }
+
+    // Salir del Panel de Administrador
+    function exitAdminMode() {
+        sessionStorage.removeItem("admin-logged");
+        document.getElementById("admin-panel").classList.add("hidden");
+
+        // Volver a mostrar landing principal
+        document.getElementById("hero").classList.remove("hidden");
+        document.getElementById("cuestionario").classList.remove("hidden");
+        document.getElementById("main-header").classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    if (btnAdminLogout) btnAdminLogout.addEventListener("click", exitAdminMode);
+
+    // Cargar bloqueos dinámicos en el panel
+    async function loadAdminBlocks() {
+        blocksList.innerHTML = '<div style="color: var(--text-muted); text-align: center; margin-top: 50px;">Cargando bloqueos...</div>';
+        try {
+            const response = await fetch(API_BLOQUEOS);
+            if (!response.ok) throw new Error("Error de conexión");
+            const data = await response.json();
+            blocksList.innerHTML = "";
+
+            if (!data || data.length === 0) {
+                blocksList.innerHTML = '<div style="color: var(--text-muted); text-align: center; margin-top: 50px;">No hay horarios bloqueados o agendados hoy.</div>';
+                return;
+            }
+
+            // Ordenar por fecha ascendente
+            data.sort((a, b) => new Date(a.fecha_hora_bloqueada) - new Date(b.fecha_hora_bloqueada));
+
+            data.forEach(item => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "admin-block-item";
+
+                const dateObj = new Date(item.fecha_hora_bloqueada);
+                const options = { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' };
+                const formattedDate = dateObj.toLocaleDateString('es-MX', options);
+
+                itemDiv.innerHTML = `
+                    <div class="admin-block-info">
+                        <span class="admin-block-title">${item.title || "Bloqueo Administrativo"}</span>
+                        <span class="admin-block-date">${formattedDate} (Hora Centro)</span>
+                    </div>
+                    <button type="button" class="btn-delete-block" data-date="${item.fecha_hora_bloqueada}">Desbloquear</button>
+                `;
+                blocksList.appendChild(itemDiv);
+            });
+        } catch (err) {
+            console.error(err);
+            blocksList.innerHTML = '<div style="color: var(--error-red); text-align: center; margin-top: 50px;">Error al cargar la lista de bloqueos.</div>';
+        }
+    }
+
+    // Bloquear Horario Manualmente
+    if (blockForm) {
+        blockForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const dateVal = blockDateInput.value;
+            const timeVal = blockTimeSelect.value;
+            if (!dateVal || !timeVal) return;
+
+            btnAdminBlock.disabled = true;
+            blockSpinner.classList.remove("hidden");
+
+            const fechaHora = `${dateVal}T${timeVal}:00`;
+
+            try {
+                const response = await fetch(API_BLOQUEOS, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify({
+                        action: "block",
+                        fecha_cita: fechaHora
+                    })
+                });
+
+                if (!response.ok) throw new Error("Error del servidor");
+                const res = await response.json();
+                if (res.status === "error") throw new Error(res.error || "Error al bloquear");
+
+                // Recargar lista y limpiar form
+                blockForm.reset();
+                await loadAdminBlocks();
+                alert("¡Horario bloqueado con éxito! Se creó en tu Google Calendar.");
+            } catch(err) {
+                console.error(err);
+                alert("No se pudo crear el bloqueo en el calendario. Verifica la conexión.");
+            } finally {
+                btnAdminBlock.disabled = false;
+                blockSpinner.classList.add("hidden");
+            }
+        });
+    }
+
+    // Desbloquear Horario (Eliminar Evento)
+    blocksList.addEventListener("click", async (e) => {
+        if (e.target.classList.contains("btn-delete-block")) {
+            const dateVal = e.target.getAttribute("data-date");
+            if (!dateVal) return;
+
+            if (!confirm(`¿Estás seguro de que deseas desbloquear y liberar el horario: ${new Date(dateVal).toLocaleString()}?`)) {
+                return;
+            }
+
+            e.target.disabled = true;
+            e.target.textContent = "Liberando...";
+
+            try {
+                const response = await fetch(API_BLOQUEOS, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify({
+                        action: "unblock",
+                        fecha_cita: dateVal
+                    })
+                });
+
+                if (!response.ok) throw new Error("Error del servidor");
+                const res = await response.json();
+                if (res.status === "error") throw new Error(res.error || "Error al desbloquear");
+
+                // Recargar lista
+                await loadAdminBlocks();
+            } catch(err) {
+                console.error(err);
+                alert("No se pudo eliminar el bloqueo del calendario.");
+                e.target.disabled = false;
+                e.target.textContent = "Desbloquear";
+            }
+        }
+    });
+
+    // Conservar login en recargas de página
+    if (sessionStorage.getItem("admin-logged") === "true") {
+        enterAdminMode();
+    }
 }
