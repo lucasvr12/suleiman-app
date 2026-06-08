@@ -35,11 +35,18 @@ const state = {
     }
 };
 
-// Horarios de asesoría (Slots de 45 min)
-const TIME_SLOTS = [
+// Horarios de asesoría por rangos de días
+const SLOTS_WEEKDAY = [ // Lunes a Jueves (9:00 AM a 8:00 PM)
     "09:00", "09:45", "10:30", "11:15", "12:00", "12:45",
-    "13:30", "14:15", "15:00", "15:45", "16:30", "17:15"
+    "13:30", "14:15", "15:00", "15:45", "16:30", "17:15",
+    "18:00", "18:45", "19:15"
 ];
+
+const SLOTS_WEEKEND = [ // Viernes y Sábado (9:00 AM a 2:00 PM)
+    "09:00", "09:45", "10:30", "11:15", "12:00", "12:45",
+    "13:15"
+];
+
 
 const MESES = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -468,8 +475,8 @@ function renderCalendar() {
         const loopDate = new Date(state.calendar.currentYear, state.calendar.currentMonth, dayNum);
         const dayOfWeek = loopDate.getDay(); // 0=Dom, 6=Sáb
 
-        // 1. Excluir fines de semana (Sábado = 6, Domingo = 0)
-        if (dayOfWeek === 0 || dayOfWeek === 6) {
+        // 1. Excluir Domingo (Domingo = 0)
+        if (dayOfWeek === 0) {
             cell.classList.add("weekend");
         }
         // 2. Excluir días en el pasado (Antes del 25 de Mayo de 2026)
@@ -556,8 +563,17 @@ function renderSlotsForDay(dateObj) {
         confirmarAgenda(datePrefix, state.calendar.selectedSlot);
     });
 
+    // Determinar slots según el día de la semana (Lunes-Jueves vs Viernes-Sábado)
+    const dayOfWeek = dateObj.getDay();
+    let activeSlots = [];
+    if (dayOfWeek >= 1 && dayOfWeek <= 4) {
+        activeSlots = SLOTS_WEEKDAY;
+    } else if (dayOfWeek === 5 || dayOfWeek === 6) {
+        activeSlots = SLOTS_WEEKEND;
+    }
+
     // Renderizar slots
-    TIME_SLOTS.forEach(time => {
+    activeSlots.forEach(time => {
         const slotBtn = document.createElement("button");
         slotBtn.type = "button";
         slotBtn.className = "slot-btn";
