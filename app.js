@@ -3,10 +3,11 @@
  * Desarrollado en Vanilla JavaScript para máxima rapidez y compatibilidad.
  */
 
-// Fecha de referencia actual del sistema (25 de Mayo de 2026)
-const CURRENT_DATE_LIMIT = new Date('2026-05-25T17:35:00-06:00');
+// Fecha de referencia actual del sistema
+const CURRENT_DATE_LIMIT = new Date();
 
 // Estado de la Aplicación (SPA State)
+const now = new Date();
 const state = {
     lead: {
         nombre: '',
@@ -27,24 +28,21 @@ const state = {
         fecha_cita: null
     },
     calendar: {
-        currentYear: 2026,
-        currentMonth: 4, // Mayo (0-indexed en JS, por ende 4)
+        currentYear: now.getFullYear(),
+        currentMonth: now.getMonth(), // Mes actual dinámico
         selectedDate: null, // Objeto Date seleccionado
         selectedSlot: null, // "HH:MM"
         blockedTimes: [] // Lista de strings ISO "YYYY-MM-DDTHH:mm:00"
     }
 };
 
-// Horarios de asesoría por rangos de días
+// Horarios de asesoría por rangos de días (Sesiones de 1 hora)
 const SLOTS_WEEKDAY = [ // Lunes a Jueves (9:00 AM a 8:00 PM)
-    "09:00", "09:45", "10:30", "11:15", "12:00", "12:45",
-    "13:30", "14:15", "15:00", "15:45", "16:30", "17:15",
-    "18:00", "18:45", "19:15"
+    "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"
 ];
 
 const SLOTS_WEEKEND = [ // Viernes y Sábado (9:00 AM a 2:00 PM)
-    "09:00", "09:45", "10:30", "11:15", "12:00", "12:45",
-    "13:15"
+    "09:00", "10:00", "11:00", "12:00", "13:00"
 ];
 
 
@@ -405,8 +403,9 @@ function initCalendarNav() {
     const nextBtn = document.getElementById("next-month-btn");
 
     prevBtn.addEventListener("click", () => {
-        // Evitar ir antes de Mayo 2026
-        if (state.calendar.currentYear === 2026 && state.calendar.currentMonth === 4) {
+        // Evitar ir antes del mes actual en tiempo real
+        const today = new Date();
+        if (state.calendar.currentYear === today.getFullYear() && state.calendar.currentMonth === today.getMonth()) {
             return;
         }
         
@@ -430,6 +429,42 @@ function initCalendarNav() {
     });
 }
 
+function isDayFullyBlocked(dateObj) {
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const datePrefix = `${year}-${month}-${day}`;
+
+    // Si hay un bloqueo exacto del día completo (ej: "YYYY-MM-DD" o "YYYY-MM-DDT00:00:00")
+    const hasFullDayBlock = state.calendar.blockedTimes.some(block => 
+        block === datePrefix || 
+        block.startsWith(datePrefix + "T00:00:00") ||
+        block.startsWith(datePrefix + "T00:00")
+    );
+    if (hasFullDayBlock) return true;
+
+    // Si todos los slots individuales de ese día están bloqueados
+    const dayOfWeek = dateObj.getDay();
+    let activeSlots = [];
+    if (dayOfWeek >= 1 && dayOfWeek <= 4) {
+        activeSlots = SLOTS_WEEKDAY;
+    } else if (dayOfWeek === 5 || dayOfWeek === 6) {
+        activeSlots = SLOTS_WEEKEND;
+    } else {
+        return true; // Domingo está siempre bloqueado
+    }
+
+    if (activeSlots.length === 0) return true;
+
+    return activeSlots.every(time => {
+        const fullDateTime = `${datePrefix}T${time}:00`;
+        return state.calendar.blockedTimes.some(block => 
+            block.startsWith(fullDateTime) || 
+            fullDateTime.startsWith(block)
+        );
+    });
+}
+
 function renderCalendar() {
     const monthYearLabel = document.getElementById("current-month-year");
     const daysGrid = document.getElementById("calendar-days-grid");
@@ -440,7 +475,8 @@ function renderCalendar() {
 
     // Navegación desactivada si es mes actual
     const prevBtn = document.getElementById("prev-month-btn");
-    if (state.calendar.currentYear === 2026 && state.calendar.currentMonth === 4) {
+    const today = new Date();
+    if (state.calendar.currentYear === today.getFullYear() && state.calendar.currentMonth === today.getMonth()) {
         prevBtn.style.opacity = "0.2";
         prevBtn.style.pointerEvents = "none";
     } else {
@@ -479,9 +515,13 @@ function renderCalendar() {
         if (dayOfWeek === 0) {
             cell.classList.add("weekend");
         }
-        // 2. Excluir días en el pasado (Antes del 25 de Mayo de 2026)
+        // 2. Excluir días en el pasado (Antes del día límite)
         else if (loopDate < new Date(CURRENT_DATE_LIMIT.getFullYear(), CURRENT_DATE_LIMIT.getMonth(), CURRENT_DATE_LIMIT.getDate())) {
             cell.classList.add("past");
+        }
+        // 3. Excluir días completamente bloqueados
+        else if (isDayFullyBlocked(loopDate)) {
+            cell.classList.add("disabled");
         }
         // Día válido seleccionable
         else {
@@ -522,7 +562,7 @@ function resetSlots() {
     dayLabel.textContent = "...";
     slotsContainer.innerHTML = `
         <div class="slots-placeholder">
-            Selecciona un día hábil en el calendario para ver los horarios de 45 minutos disponibles.
+            Selecciona un día hábil en el calendario para ver los horarios de 1 hora disponibles.
         </div>
     `;
     btnAgendar.disabled = true;
@@ -801,7 +841,7 @@ ${lead.comentarios ? `📝 Notas: ${lead.comentarios}\n` : ""}
     // Configurar redirección de Google Calendar para el Cliente
     const gcBtn = document.getElementById("google-calendar-btn");
     const startTime = new Date(lead.fecha_cita);
-    const endTime = new Date(startTime.getTime() + 45 * 60 * 1000); // 45 minutos
+    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // 1 hora (60 minutos)
 
     const formatToUTC = (date) => {
         return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
@@ -937,6 +977,7 @@ function initAdminPanel() {
     if (btnAdminLogout) btnAdminLogout.addEventListener("click", exitAdminMode);
 
     // Cargar bloqueos dinámicos en el panel
+    // Cargar bloqueos dinámicos en el panel
     async function loadAdminBlocks() {
         blocksList.innerHTML = '<div style="color: var(--text-muted); text-align: center; margin-top: 50px;">Cargando bloqueos...</div>';
         try {
@@ -957,14 +998,28 @@ function initAdminPanel() {
                 const itemDiv = document.createElement("div");
                 itemDiv.className = "admin-block-item";
 
-                const dateObj = new Date(item.fecha_hora_bloqueada);
-                const options = { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' };
-                const formattedDate = dateObj.toLocaleDateString('es-MX', options);
+                const isFullDay = !item.fecha_hora_bloqueada.includes("T");
+                let dateObj;
+                if (isFullDay) {
+                    const [y, m, d] = item.fecha_hora_bloqueada.split("-");
+                    dateObj = new Date(y, m - 1, d);
+                } else {
+                    dateObj = new Date(item.fecha_hora_bloqueada);
+                }
+
+                let formattedDate;
+                if (isFullDay) {
+                    const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+                    formattedDate = dateObj.toLocaleDateString('es-MX', options) + " (Día Completo)";
+                } else {
+                    const options = { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' };
+                    formattedDate = dateObj.toLocaleDateString('es-MX', options) + " (Hora Centro)";
+                }
 
                 itemDiv.innerHTML = `
                     <div class="admin-block-info">
                         <span class="admin-block-title">${item.title || "Bloqueo Administrativo"}</span>
-                        <span class="admin-block-date">${formattedDate} (Hora Centro)</span>
+                        <span class="admin-block-date">${formattedDate}</span>
                     </div>
                     <button type="button" class="btn-delete-block" data-date="${item.fecha_hora_bloqueada}">Desbloquear</button>
                 `;
@@ -976,18 +1031,42 @@ function initAdminPanel() {
         }
     }
 
-    // Bloquear Horario Manualmente
+    // Bloquear Horario / Día Manualmente
     if (blockForm) {
+        // Toggle de vista del campo horario según el tipo de bloqueo
+        const timeRow = document.getElementById("admin-block-time-row");
+        const typeRadios = document.getElementsByName("admin-block-type");
+
+        typeRadios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                if (radio.value === "day") {
+                    timeRow.style.display = "none";
+                    blockTimeSelect.required = false;
+                    blockTimeSelect.value = "";
+                } else {
+                    timeRow.style.display = "block";
+                    blockTimeSelect.required = true;
+                }
+            });
+        });
+
         blockForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             const dateVal = blockDateInput.value;
-            const timeVal = blockTimeSelect.value;
-            if (!dateVal || !timeVal) return;
+            const blockType = blockForm.querySelector('input[name="admin-block-type"]:checked').value;
+            
+            let fechaHora;
+            if (blockType === "day") {
+                if (!dateVal) return;
+                fechaHora = dateVal; // YYYY-MM-DD
+            } else {
+                const timeVal = blockTimeSelect.value;
+                if (!dateVal || !timeVal) return;
+                fechaHora = `${dateVal}T${timeVal}:00`;
+            }
 
             btnAdminBlock.disabled = true;
             blockSpinner.classList.remove("hidden");
-
-            const fechaHora = `${dateVal}T${timeVal}:00`;
 
             try {
                 const response = await fetch(API_BLOQUEOS, {
@@ -1003,10 +1082,12 @@ function initAdminPanel() {
                 const res = await response.json();
                 if (res.status === "error") throw new Error(res.error || "Error al bloquear");
 
-                // Recargar lista y limpiar form
+                // Recargar lista, resetear formulario y restablecer visibilidad de campos
                 blockForm.reset();
+                timeRow.style.display = "block";
+                blockTimeSelect.required = true;
                 await loadAdminBlocks();
-                alert("¡Horario bloqueado con éxito! Se creó en tu Google Calendar.");
+                alert(blockType === "day" ? "¡Día completo bloqueado con éxito!" : "¡Horario bloqueado con éxito! Se creó en tu Google Calendar.");
             } catch(err) {
                 console.error(err);
                 alert("No se pudo crear el bloqueo en el calendario. Verifica la conexión.");

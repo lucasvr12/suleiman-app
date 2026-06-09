@@ -446,7 +446,7 @@
                         
                         <div class="slots-container" id="slots-container">
                             <div class="slots-placeholder">
-                                Selecciona un día hábil en el calendario para ver los horarios de 45 minutos disponibles.
+                                Selecciona un día hábil en el calendario para ver los horarios de 1 hora disponibles.
                             </div>
                         </div>
 
@@ -487,26 +487,36 @@
                         </div>
                         <div class="form-row" style="margin-bottom: 15px;">
                             <div class="form-group">
+                                <label style="color: var(--text-muted);">Tipo de Bloqueo <span class="required">*</span></label>
+                                <div style="display: flex; gap: 20px; margin-top: 8px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; color: var(--text-main); cursor: pointer;">
+                                        <input type="radio" name="admin-block-type" value="slot" checked style="accent-color: var(--accent-gold); width: auto;">
+                                        <span>Horario Específico</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; color: var(--text-main); cursor: pointer;">
+                                        <input type="radio" name="admin-block-type" value="day" style="accent-color: var(--accent-gold); width: auto;">
+                                        <span>Día Completo</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row" style="margin-bottom: 15px;" id="admin-block-time-row">
+                            <div class="form-group">
                                 <label for="admin-block-time" style="color: var(--text-muted);">Seleccionar Horario <span class="required">*</span></label>
                                 <div class="input-wrapper select-wrapper">
                                     <select id="admin-block-time" required>
                                         <option value="" disabled selected>Selecciona un horario</option>
                                         <option value="09:00">09:00 AM</option>
-                                        <option value="09:45">09:45 AM</option>
-                                        <option value="10:30">10:30 AM</option>
-                                        <option value="11:15">11:15 AM</option>
+                                        <option value="10:00">10:00 AM</option>
+                                        <option value="11:00">11:00 AM</option>
                                         <option value="12:00">12:00 PM</option>
-                                        <option value="12:45">12:45 PM</option>
-                                        <option value="13:15">13:15 PM</option>
-                                        <option value="13:30">13:30 PM</option>
-                                        <option value="14:15">14:15 PM</option>
-                                        <option value="15:00">15:00 PM</option>
-                                        <option value="15:45">15:45 PM</option>
-                                        <option value="16:30">16:30 PM</option>
-                                        <option value="17:15">17:15 PM</option>
-                                        <option value="18:00">18:00 PM</option>
-                                        <option value="18:45">18:45 PM</option>
-                                        <option value="19:15">19:15 PM</option>
+                                        <option value="13:00">01:00 PM</option>
+                                        <option value="14:00">02:00 PM</option>
+                                        <option value="15:00">03:00 PM</option>
+                                        <option value="16:00">04:00 PM</option>
+                                        <option value="17:00">05:00 PM</option>
+                                        <option value="18:00">06:00 PM</option>
+                                        <option value="19:00">07:00 PM</option>
                                     </select>
                                 </div>
                             </div>
